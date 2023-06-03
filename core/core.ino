@@ -40,15 +40,9 @@ void loop() {
   int steering = pulseIn(RC_steering_pin, HIGH);
   Serial.println(steering);
 
-  int steering = map(steering , 1000 , 1980 , SERVOMIN, SERVOMAX);
+  steering = map(steering , 1000 , 1980 , SERVOMIN, SERVOMAX);
 
-  pwm.setPWM(0, 0, angle);
-  pwm.setPWM(1, 0, angle);
-  pwm.setPWM(2, 0, angle);
-  pwm.setPWM(3, 0, angle);
-  pwm.setPWM(4, 0, angle);
-  pwm.setPWM(5, 0, angle);
-
+  ackermann(steering);
   delay(10);
 
 }
@@ -64,8 +58,9 @@ int assign_steering_slot(int steering){
 
     Steering has 9 target radii: -60 -90 -150 -200 inf 200 150 90 60.
   */
+  int steering_slot = 0;
 
-  if (steering >= 120 && steering < 190){
+  if (steering < 190){
     steering_slot = -4;
   }
   else if (steering >= 170 && steering < 250){
@@ -89,7 +84,7 @@ int assign_steering_slot(int steering){
   else if (steering >= 530 && steering < 610){
     steering_slot = 3; 
   }
-  else if (steering >= 590 && steering < 660){
+  else if (steering >= 590){
     steering_slot = 4; 
   }
 
@@ -108,10 +103,73 @@ int ackermann(int steering){
     Implements Ackermann Steering based on the steering slot.
   */
   
-
-  if(steering_slot_old != assign_steering_slot(steering)){
-    
+  int steer = assign_steering_slot(steering);
+  int FR_angle = 390;
+  int FL_angle = 390;
+  int BR_angle = 390;
+  int BL_angle = 390;
+  
+  if(steering_slot_old != steer){
+    if(steer == -4){
+      FR_angle = 495;
+      FL_angle = 453;
+      BR_angle = 285;
+      BL_angle = 326;
+    }
+    else if(steer == -3){
+      FR_angle = 458;
+      FL_angle = 436;
+      BR_angle = 322;
+      BL_angle = 343;
+    }
+    else if(steer == -2){
+      FR_angle = 429;
+      FL_angle = 420;
+      BR_angle = 351;
+      BL_angle = 359;
+    }
+    else if(steer == -1){
+      FR_angle = 418;
+      FL_angle = 413;
+      BR_angle = 362;
+      BL_angle = 366;
+    }
+    else if(steer == 1){
+      FR_angle = 362;
+      FL_angle = 366;
+      BR_angle = 418;
+      BL_angle = 413;
+    }
+    else if(steer == 2){
+      FR_angle = 351;
+      FL_angle = 359;
+      BR_angle = 429;
+      BL_angle = 420;
+    }
+    else if(steer == 3){
+      FR_angle = 322;
+      FL_angle = 343;
+      BR_angle = 458;
+      BL_angle = 436;
+    }
+    else if(steer == 4){
+      FR_angle = 285;
+      FL_angle = 326;
+      BR_angle = 495;
+      BL_angle = 453;
+    }
+    else{
+      FR_angle = 390;
+      FL_angle = 390;
+      BR_angle = 390;
+      BL_angle = 390;
+    }
+    pwm.setPWM(FL, 0, FL_angle);
+    pwm.setPWM(FR, 0, FR_angle);
+    pwm.setPWM(BL, 0, BL_angle);
+    pwm.setPWM(BR, 0, BR_angle);
   }
 
-
+  steering_slot_old = steer;
+  
 }
