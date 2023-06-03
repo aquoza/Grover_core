@@ -11,38 +11,73 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVO_FREQ 60 // Analog servos run at ~50 Hz updates
 
 #define RC_steering_pin 2
+#define RC_speed_pin 3
 int steering_slot_old = 0;
 
+//Servo Channels
 int FR = 0;
 int FL = 1;
+int MR = 2;
+int ML = 3;
 int BR = 4;
 int BL = 5;
 
-// our servo # counter
-uint8_t servonum = 0;
+//Motor Driver pins
+int FR_D0_pin = 5;
+int FR_D1_pin = 6;
+// int FL_D2_pin = 4;
+// int FL_D3_pin = 7;
+// int MR_D0_pin = 8;
+// int MR_D1_pin = 9;
+// int ML_D2_pin = 10;
+// int ML_D3_pin = 11;
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("8 channel Servo test!");
-  pinMode(RC_steering_pin, INPUT);
 
+  //init RC input pins
+  pinMode(RC_steering_pin, INPUT);
+  pinMode(RC_speed_pin, INPUT);
+
+  //init motor driver PWM pins
+  pinMode(FR_D0_pin, OUTPUT);
+  pinMode(FR_D1_pin, OUTPUT);
+
+
+  //init servo driver  
   pwm.begin();
   pwm.setOscillatorFrequency(25000000);
   pwm.setPWMFreq(60);  // Analog servos run at ~50 Hz updates
 
   delay(10);
+
 }
 
 
 
 void loop() {
 
+  //Measuring RC input
   int steering = pulseIn(RC_steering_pin, HIGH);
-  Serial.println(steering);
+  int speed = pulseIn(RC_speed_pin, HIGH);
 
+  //Mapping inputs accordingly 
   steering = map(steering , 1000 , 1980 , SERVOMIN, SERVOMAX);
+  
+  if (speed >= 1400 && speed < 1600){
+    speed = 0;
+  }
+  else if (speed >= 1600){
+    speed = map(speed , 1600 , 2000, 20 , 250);
+  }
+  else {
+    speed = map(speed , 1400 , 1000 , -20 , -250);
+  }
 
+  
   ackermann(steering);
+  
+  set_speed(speed);
+
   delay(10);
 
 }
@@ -92,7 +127,7 @@ int assign_steering_slot(int steering){
 
 }
 
-int ackermann(int steering){
+void ackermann(int steering){
   /*
     INPUT
       steering_slot
@@ -106,6 +141,8 @@ int ackermann(int steering){
   int steer = assign_steering_slot(steering);
   int FR_angle = 390;
   int FL_angle = 390;
+  int MR_angle = 390;
+  int ML_angle = 390;
   int BR_angle = 390;
   int BL_angle = 390;
   
@@ -166,10 +203,36 @@ int ackermann(int steering){
     }
     pwm.setPWM(FL, 0, FL_angle);
     pwm.setPWM(FR, 0, FR_angle);
+    pwm.setPWM(ML, 0, BL_angle);
+    pwm.setPWM(MR, 0, BR_angle);
     pwm.setPWM(BL, 0, BL_angle);
     pwm.setPWM(BR, 0, BR_angle);
   }
 
   steering_slot_old = steer;
   
+}
+
+void set_speed(int speed){
+  if (speed >= 0){
+    analogWrite(FR_D0_pin, speed);
+    analogWrite(FR_D1_pin, 0);
+    // analogWrite(FL_D2_pin, 0);
+    // analogWrite(FL_D3_pin, speed);
+    // analogWrite(MR_D0_pin, speed);
+    // analogWrite(MR_D1_pin, 0);
+    // analogWrite(ML_D2_pin, 0);
+    // analogWrite(ML_D3_pin, speed);  
+  }
+
+  else {
+    analogWrite(FR_D0_pin, 0);
+    analogWrite(FR_D1_pin, -speed);
+    // analogWrite(FL_D2_pin, -speed);
+    // analogWrite(FL_D3_pin, 0);
+    // analogWrite(MR_D0_pin, 0);
+    // analogWrite(MR_D1_pin, -speed);
+    // analogWrite(ML_D2_pin, -speed);
+    // analogWrite(ML_D3_pin, 0);    
+  }
 }
