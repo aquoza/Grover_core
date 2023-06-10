@@ -203,8 +203,8 @@ void ackermann(int steering){
     }
     pwm.setPWM(FL, 0, FL_angle);
     pwm.setPWM(FR, 0, FR_angle);
-    pwm.setPWM(ML, 0, BL_angle);
-    pwm.setPWM(MR, 0, BR_angle);
+    pwm.setPWM(ML, 0, 390);
+    pwm.setPWM(MR, 0, 390);
     pwm.setPWM(BL, 0, BL_angle);
     pwm.setPWM(BR, 0, BR_angle);
   }
