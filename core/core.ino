@@ -67,10 +67,10 @@ void loop() {
     speed = 0;
   }
   else if (speed >= 1600){
-    speed = map(speed , 1600 , 2000, 20 , 250);
+    speed = map(speed , 1600 , 2000, 20 , 200);
   }
   else {
-    speed = map(speed , 1400 , 1000 , -20 , -250);
+    speed = map(speed , 1400 , 1000 , -20 , -200);
   }
 
   
@@ -123,7 +123,7 @@ int assign_steering_slot(int steering){
     steering_slot = 4; 
   }
 
-  return steering_slot;
+  return -steering_slot;
 
 }
 
