@@ -5,9 +5,8 @@ NOTES:
 1) Set correct reciver channels [21 - 25] 
 2) Test if inverse mapping is fine
 3) check if switches mapping are correct (SwitchC)
+4) check target heading float int conversion
 **/
-
-
 
 #include <Arduino.h>
 
@@ -16,7 +15,6 @@ const int uartTxPin = 17;  // GPIO pin for UART TX
 const int uartRxPin = 16;  // GPIO pin for UART RX
 const int baudRate = 19200;
 
-
 // Define Input Connections
 #define CH1 3
 #define CH2 5
@@ -24,7 +22,6 @@ const int baudRate = 19200;
 #define CH4 9
 #define CH5 10
 #define CH6 11
-
 
 /*
 Manual RC control
@@ -45,7 +42,7 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 	speed = map(throttle, 950, 2050, -100 , 100);	
 	if(abs(speed) < 20){speed = 0;}
 	else if(speed < 0){
-		throttle =abs(speed);
+		speed =abs(speed);
 		direction = 2;
 	}
 
@@ -54,19 +51,20 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 		//Strafe
 		case 1 :  
 			modifier = map(steering, 950, 2050, 0, 180);
-			if(abs(modifier) < 10){modifier = 90;}
+			if(80 < modifier && modifier < 100){modifier = 90;}
 			break;
 
 		//Ackermann
 		case 2 :  
-			modifier = map(steering, 950, 2050, -100, 100);
-			if(abs(modifier) < 10){modifier = 0;}	
+			modifier = map(steering, 950, 2050, 0 , 255);
+			if(120 < modifier && modifier < 134){modifier = 127;}
 			break;
 
 		//UTurn
 		case 3 :  
-			speed = map(steering, 950, 2050, 0, 255);
-			if(120 < speed && speed < 134){speed = 127;}
+			if(direction == 2){ modifier = 0; }
+			else if(speed == 0){ modifier = 1; }
+			else{modifier = 2;}
 			break;
 		
 		//Idle
@@ -93,14 +91,17 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 	return output;
 }
 
-
 uint8_t Autonomous (vector<double>target_GPS, vector<double> GPS, double heading){
 	//convert target heading to degrees
-	double target_heading = atan((target_GPS[0] - GPS[0])/(target_GPS[1] - GPS[1]))*57.2957795131;	
+	double target_heading = 90 - atan((target_GPS[0] - GPS[0])/(target_GPS[1] - GPS[1]))*57.2957795131;	
 
+	uint8_t STOP[] = {};
+	uint8_t LEFT[] = {};
+	uint8_t RIGHT[] = {};
+	uint8_t FORWARD[] = {};
+	uint8_t UTURN[] = {};
 
 }
-
 
 void setup() {
 	delay(5000);
@@ -137,7 +138,6 @@ void loop(){
 	else {
 		command = Manual(mode, throttle, steering);
 	}
-
 
 	// Send the array over UART
 	int arraySize = 4;
