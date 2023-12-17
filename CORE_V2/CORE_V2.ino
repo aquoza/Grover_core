@@ -39,7 +39,7 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 	uint8_t speed,modifier;
 	uint8_t direction = 0;
 
-	speed = map(throttle, 950, 2050, -100 , 100);	
+	speed = map(throttle, 950, 2050, -255 , 255);	
 	if(abs(speed) < 20){speed = 0;}
 	else if(speed < 0){
 		speed =abs(speed);
@@ -69,16 +69,16 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 		
 		//Idle
 		case 0 :
+			mode = 1;
 			speed = 0;
 			modifier = 90;
-			mode = 1;
 			direction = 0;
 			break;
 
 		default :
+			mode = 1;
 			speed = 0;
 			modifier = 90;
-			mode = 1;
 			direction = 0;
 			break;
 	}	
@@ -92,13 +92,14 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 }
 
 uint8_t Autonomous (vector<double>target_GPS, vector<double> GPS, double heading){
+
 	//convert target heading to degrees
 	double target_heading = 90 - atan((target_GPS[0] - GPS[0])/(target_GPS[1] - GPS[1]))*57.2957795131;	
 
-	uint8_t STOP[] = {};
-	uint8_t LEFT[] = {};
-	uint8_t RIGHT[] = {};
-	uint8_t FORWARD[] = {};
+	uint8_t STOP[] = {1, 0, 90, 0};
+	uint8_t LEFT[] = {3, 100, 0, 2};
+	uint8_t RIGHT[] = {3, 100, 2, 0};
+	uint8_t FORWARD[] = {1, 100, };
 	uint8_t UTURN[] = {};
 
 }
