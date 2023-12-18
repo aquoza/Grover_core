@@ -1,0 +1,4 @@
+mavproxy.py --master=/dev/ttyACM0
+
+scp -r gensusCV@192.168.79.202:/home/gensusCV/Desktop/pixhawk /home/skully/
+
