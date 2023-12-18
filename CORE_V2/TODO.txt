@@ -1,0 +1,17 @@
+
+NOTES:
+   
+[ ] Set correct reciver channels [21 - 25]
+[ ] Test if inverse mapping is fine
+[ ] check if switches mapping are correct (SwitchC)
+[ ] check target heading float int conversion
+[ ] check correct heading if its oscillating
+[ ] implement U-turn after reaching end. 
+
+
+
+RPI_comms:
+[ ] write comms code on rpi and arduino.
+[ ] write test files for comms test
+[ ] characterise error on gps and heading.
+

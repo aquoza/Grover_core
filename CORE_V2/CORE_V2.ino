@@ -1,35 +1,35 @@
-/** Arduino code for GRover_V2
-
-NOTES:
-   
-1)[  ] Set correct reciver channels [21 - 25]
-2)[  ] Test if inverse mapping is fine
-3)[  ] check if switches mapping are correct (SwitchC)
-4)[  ] check target heading float int conversion
-5)[  ] check correct heading if its oscillating
-**/
+/** Arduino code for GRover_V2 **/
 
 #include <Arduino.h>
+#include <Wire.h>
+#include <params.h>
 
-// Define the UART parameters
-const int uartTxPin = 17;  // GPIO pin for UART TX
-const int uartRxPin = 16;  // GPIO pin for UART RX
-const int baudRate = 19200;
+/**
+0 - targetgps_NHIGH
+1 - targetgps_NLOW
+2 - targetgps_EHIGH
+3 - targetgps_ELOW
+4 - currentgps_NHIGH
+5 - currentgps_NLOW
+6 - currentgps_EHIGH
+7 - currentgps_ELOW
+8 - currentheadingHIGH
+9 - currentheadingLOW
+**/
+byte dataget[10]; //input data from RPI
 
-// Define Input Connections
-#define CH1 3
-#define CH2 5
-#define CH3 6
-#define CH4 9
-#define CH5 10
-#define CH6 11
-
-// Actions
-uint8_t IDLE[] = {1, 0, 90, 0};
-uint8_t LEFT[] = {3, 100, 0, 2};
-uint8_t RIGHT[] = {3, 100, 2, 0};
-uint8_t FORWARD[] = {1, 100, };
-
+void requestData()
+{
+	Wire.requestFrom(0x08, 10);
+	for (int i = 0; i < 10; i++) {
+		dataget[i] = Wire.read(); 
+	}
+	target_GPS[0] = (dataGet[0] << 8 | dataGet[1])/10;
+	target_GPS[1] = (dataGet[2] << 8 | dataGet[3])/10;
+	current_GPS[0] = (dataGet[4] << 8 | dataGet[5])/10;
+	current_GPS[1] = (dataGet[6] << 8 | dataGet[7])/10;
+	current_heading = (dataGet[8] << 8 | dataGet[9])/10;
+}
 /*
 Manual RC control
 INPUTS :
@@ -46,8 +46,8 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 	uint8_t speed,modifier;
 	uint8_t direction = 0;
 
-	speed = map(throttle, 950, 2050, -255 , 255);
-	if(abs(speed) < 20){speed = 0;}
+	speed = map(throttle, 950, 2050, -MAX_SPEED , MAX_SPEED);
+	if(abs(speed) < ERR_SPEED){speed = 0;}  //speed err
 	else if(speed < 0){
 		speed =abs(speed);
 		direction = 2;
@@ -64,7 +64,7 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 		//Ackermann
 		case 2 : 
 			modifier = map(steering, 950, 2050, 0 , 255);
-			if(120 < modifier && modifier < 134){modifier = 127;}
+			if(126 - ERR_ACKERMANN < modifier && modifier < 126 + ERR_ACKERMANN){modifier = 127;}
 			break;
 
 		//UTurn
@@ -100,6 +100,7 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 
 
 uint8_t* correct_heading(double current_heading, double target_heading){
+
 	if (current_heading > target_heading){
 		return LEFT;
 	}
@@ -113,14 +114,12 @@ uint8_t* Autonomous (vector<double>target_GPS, vector<double> current_GPS, doubl
 	//Implement queue for moving average
 	queue <vector<double>> avg_Q;
 	vector<double> moving_average = 0;
-
-	if(moving_average.size() < 11){
+	if(moving_average.size() < MOVNG_AVERAGE_SIZE){
 		avg_Q.push(current_GPS);
 		moving_average[0] += current_GPS[0];
 		moving_average[1] += current_GPS[1];  
 		return IDLE;
 	}
-
 	moving_average[0] -= avg_Q.front()[0];
 	moving_average[1] -= avg_Q.front()[1];
 	avg_Q.pop();
@@ -128,29 +127,32 @@ uint8_t* Autonomous (vector<double>target_GPS, vector<double> current_GPS, doubl
 	moving_average[0] += avg_Q.end()[0];
 	moving_average[1] += avg_Q.end()[1];
 
-	current_GPS[0] = moving_average[0]/10;
-	current_GPS[1] = moving_average[1]/10;
+	current_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
+	current_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
 
 	//convert target heading to degrees
 	double target_heading = 90 - atan((target_GPS[0] - current_GPS[0])/
 										(target_GPS[1] - current_GPS[1]))*57.2957795131;
 
-	//correct heading if its off
-	if(!(target_heading*0.93 < current_heading && current_heading < target_heading*1.07)){
-		return correct_heading;
-	}
-	
 	//Is reached
 	if(target_GPS[0] - 2 < current_GPS[0] && current_GPS[1] < target_GPS[0] + 2 &&
 		target_GPS[1] - 2 < current_GPS[1] && current_GPS[1] < target_GPS[1] + 2){
 		return IDLE;
 	}
+	//correct heading if its off
+	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
+		return correct_heading;
+	}
+	
 
 	return FORWARD;
 
 }
 
 void setup() {
+	Wire.begin();
+	Wire.onReceive(receiveData);
+
 	delay(5000);
 	Serial.begin(baudRate);
 
@@ -170,8 +172,9 @@ void loop(){
 	int SwitchA = pulseIn(CH3, HIGH, 30000);
 	int SwitchB = pulseIn(CH4, HIGH, 30000);
 	int SwitchC = pulseIn(CH5, HIGH, 30000);
-	int mode = 0;
 
+
+	int mode = 0;
 	//Getting mode
 	if(SwitchA == 0 && SwitchB == 0){ mode = 0; }
 	else if (SwitchA == 1 && SwitchB == 0){ mode = 1; }
@@ -180,7 +183,8 @@ void loop(){
 
 	//Autonomous or Manual depending on SwitchC
 	if(SwitchC > 1500){
-		command = Autonomous(GPS, heading);
+		requestData();
+		command = Autonomous(target_GPS, current_GPS, current_heading);
 	}
 	else {
 		command = Manual(mode, throttle, steering);
