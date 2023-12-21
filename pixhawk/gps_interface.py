@@ -49,7 +49,7 @@ while True:
     data[3] = NED_target[1] % 256
     data[4] = (yaw_degrees/256)%1
     data[5] = yaw_degrees % 256
-    numpy.array(data)
+    data = numpy.array(data)
     data.astype(int)
     with smbus.SMBus(1) as I2Cbus:
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
