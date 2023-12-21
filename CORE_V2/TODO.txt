@@ -7,11 +7,12 @@ NOTES:
 [ ] check target heading float int conversion
 [ ] check correct heading if its oscillating
 [ ] implement U-turn after reaching end. 
-
+[V1] fix moving average
 
 
 RPI_comms:
-[ ] write comms code on rpi and arduino.
+[V1] write comms code on rpi and arduino.
 [ ] write test files for comms test
 [ ] characterise error on gps and heading.
-
+[ ] Install navpy
+[ ] Fix yaw such that it points towards north.
