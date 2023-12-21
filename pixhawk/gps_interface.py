@@ -3,6 +3,7 @@ import smbus2 as smbus#,smbus2
 import time
 from pymavlink import mavutil
 import navpy
+import numpy
 
 LATITUDE_TARGET = 0
 LONGITUDE_TARGET = 0
@@ -48,6 +49,7 @@ while True:
     data[3] = NED_target[1] % 256
     data[4] = (yaw_degrees/256)%1
     data[5] = yaw_degrees % 256
+    numpy.array(data)
     data.astype(int)
     with smbus.SMBus(1) as I2Cbus:
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
