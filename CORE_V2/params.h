@@ -9,11 +9,11 @@ const int baudRate = 19200;
 
 // Define Input Connections
 #define CH1 3
-#define CH2 5
-#define CH3 6
-#define CH4 9
-#define CH5 10
-#define CH6 11
+#define CH2 5 // throttle
+#define CH3 6 
+#define CH4 9 //direction
+#define CH5 10 //autonomous
+#define CH6 11 // mode
 
 // Actions
 uint8_t IDLE[] = {1, 0, 90, 0};

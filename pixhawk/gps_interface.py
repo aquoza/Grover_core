@@ -51,9 +51,9 @@ while True:
     data[5] = yaw_degrees % 256
     data = numpy.array(data)
     data.astype(int)
-    with smbus.SMBus(1) as I2Cbus:
-        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
-        time.sleep(0.1)
+    # with smbus.SMBus(1) as I2Cbus:
+    #     I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
+    #     time.sleep(0.1)
 
     print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} m, Yaw: {yaw_degrees} degrees, Ground Speed: {ground_speed} m/s")
    # print(f" Yaw: {yaw_degrees}")

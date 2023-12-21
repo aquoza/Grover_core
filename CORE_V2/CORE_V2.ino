@@ -21,11 +21,13 @@ double target_GPS[2];
 double current_heading;
 int count = 0;
 double moving_average[3] = {0,0,0};
-double head[3] = {0,0,0};
-double tail[3] = {MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1};
-double N_array[MOVNG_AVERAGE_SIZE];
-double E_array[MOVNG_AVERAGE_SIZE];
-double yaw_array[MOVNG_AVERAGE_SIZE];
+int head[3] = {0,0,0};
+int tail[3] = {MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1};
+double N_array[10];
+double E_array[10];
+double yaw_array[10];
+
+uint8_t output_M[4] = {1 , 0 , 90 , 0};
 
 void recieveData(int byteCount)
 {
@@ -49,13 +51,16 @@ INPUTS :
 OUTPUTS :
 - array with four STM parameters
  */
-uint8_t* Manual(uint8_t mode, int throttle, int steering){
+uint8_t Manual(uint8_t mode, int throttle, int steering){
 
-	uint8_t output[] = {1 , 0 , 90 , 0};
-	uint8_t speed,modifier;
+
+	int speed,modifier;
 	uint8_t direction = 0;
 
+
+
 	speed = map(throttle, 950, 2050, -MAX_SPEED , MAX_SPEED);
+
 	if(abs(speed) < ERR_SPEED){speed = 0;}  //speed err
 	else if(speed < 0){
 		speed =abs(speed);
@@ -99,15 +104,15 @@ uint8_t* Manual(uint8_t mode, int throttle, int steering){
 			break;
 	}
 
-	output[0] = mode;
-	output[1] = speed;
-	output[2] = modifier;
-	output[3] = direction;
+	output_M[0] = mode;
+	output_M[1] = speed;
+	output_M[2] = modifier;
+	output_M[3] = direction;
 
-	return output;
+	return ;
 }
 
-double calculate_heading(double target_GPS){
+double calculate_heading(double* target_GPS){
 	if(target_GPS[1] >= 0){
 		return 90 - atan(target_GPS[0]/target_GPS[1])*57.2957795131;
 	}
@@ -194,28 +199,48 @@ void setup() {
 void loop(){
 
 	// Get readings
-	int throttle = pulseIn(CH1, HIGH, 30000);
-	int steering = pulseIn(CH2, HIGH, 30000);
-	int SwitchA = pulseIn(CH3, HIGH, 30000);
-	int SwitchB = pulseIn(CH4, HIGH, 30000);
-	int SwitchC = pulseIn(CH5, HIGH, 30000);
+	int throttle = pulseIn(CH2, HIGH, 30000);
+	int steering = pulseIn(CH4, HIGH, 30000);
+	// int SwitchA = pulseIn(CH3, HIGH, 30000);
+	int SwitchB = pulseIn(CH5, HIGH, 30000);
+	int SwitchC = pulseIn(CH6, HIGH, 30000);
 
+      //   Serial.println(); // Add a newline character at the end of the transmission
+      // Serial.print(throttle);
+      // Serial.print(" | ");
+      // Serial.print(steering);
+      // Serial.print(" | ");
+      // Serial.print(SwitchB);
+      // Serial.print(" | ");
+      // Serial.print(SwitchC);
 
 	int mode = 0;
 	//Getting mode
-	if(SwitchA == 0 && SwitchB == 0){ mode = 0; }
-	else if (SwitchA == 1 && SwitchB == 0){ mode = 1; }
-	else if (SwitchA == 0 && SwitchB == 1){ mode = 2; }
-	else { mode = 3; }
+	if(SwitchC < 1200){ mode = 1; }
+	else if (1200 <= SwitchC && SwitchC < 1800){ mode = 2; }
+	else if (SwitchC >= 1800){ mode = 3; }
+	else { mode = 0; }
 
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
-	if(SwitchC > 1500){
-		Serial.write(Autonomous(target_GPS, current_GPS, current_heading), sizeof(int) * arraySize);
+	if(SwitchB > 1500){
+		Serial.write(Autonomous(target_GPS, current_heading), sizeof(int) * arraySize);
 	}
 	else {
-		Serial.write(Manual(mode, throttle, steering), sizeof(int) * arraySize);
-		delay(100);  // Adjust the delay based on your requirements
+		Serial.write(output_M, sizeof(int) * arraySize);
+		  delay(100);  // Adjust the delay based on your requirements
+      Manual(mode, throttle, steering);
+      Serial.println();
+      Serial.print(output_M[0]);
+      Serial.print(" | ");
+      Serial.print(output_M[1]);
+      Serial.print(" | ");
+      Serial.print(output_M[2]);
+      Serial.print(" | ");
+      Serial.print(output_M[3]);
+      Serial.print(" | ");
+      // Serial.print(SwitchC);
+
 	}
 
 }
