@@ -8,7 +8,7 @@ LATITUDE_TARGET = 0
 LONGITUDE_TARGET = 0
 YAW_NORTH_BIAS = 0
 
-I2Cbus = smbus.SMbus(1)
+I2Cbus = smbus.SMBus(1)
 slaveAddress = 0x08
 
 data = [0]*6
