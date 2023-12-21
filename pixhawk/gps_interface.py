@@ -8,7 +8,7 @@ LATITUDE_TARGET = 0
 LONGITUDE_TARGET = 0
 YAW_NORTH_BIAS = 0
 
-# I2Cbus = smbus.SMBus(1)
+I2Cbus = smbus.SMBus(1)
 slaveAddress = 0x08
 
 data = [0]*6
@@ -39,19 +39,19 @@ while True:
     # Extract velocity data
     ground_speed = velocity_msg.groundspeed  # Ground speed in meters per second
 
-    # NED_target[0] = (NED_target[0]*10)%1
-    # NED_target[1] = (NED_target[1]*10)%1
-    # yaw_degrees = (yaw_degrees*10)%1
-    # data[0] = NED_target[0]>>8
-    # data[1] = NED_target[0] % 256
-    # data[2] = NED_target[1]>>8
-    # data[3] = NED_target[1] % 256
-    # data[4] = yaw_degrees >>8
-    # data[5] = yaw_degrees % 256
+    NED_target[0] = (NED_target[0]*10)%1
+    NED_target[1] = (NED_target[1]*10)%1
+    yaw_degrees = (yaw_degrees*10)%1
+    data[0] = (NED_target[0]/256)%1
+    data[1] = NED_target[0] % 256
+    data[2] = (NED_target[1]/256)%1
+    data[3] = NED_target[1] % 256
+    data[4] = (yaw_degrees/256)%1
+    data[5] = yaw_degrees % 256
     
-    # with smbus.SMBus(1) as I2Cbus:
-    #     I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
-    #     time.sleep(0.1)
+    with smbus.SMBus(1) as I2Cbus:
+        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
+        time.sleep(0.1)
 
     print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} m, Yaw: {yaw_degrees} degrees, Ground Speed: {ground_speed} m/s")
    # print(f" Yaw: {yaw_degrees}")
