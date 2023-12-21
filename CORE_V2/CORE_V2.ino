@@ -28,8 +28,9 @@ double E_array[10];
 double yaw_array[10];
 
 uint8_t output_M[4] = {1 , 0 , 90 , 0};
+uint8_t output_A[4] = {1 , 0 , 90 , 0};
 
-void recieveData(int byteCount)
+void recieveData()
 {
 	while(Wire.available()){
 		for (int i = 0; i < 6; i++) {
@@ -221,10 +222,22 @@ void loop(){
 	else if (SwitchC >= 1800){ mode = 3; }
 	else { mode = 0; }
 
+
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
 	if(SwitchB > 1500){
+    delay(100);
+    // recieveData();
 		Serial.write(Autonomous(target_GPS, current_heading), sizeof(int) * arraySize);
+      Serial.println();
+      Serial.print(current_heading);
+      Serial.print(" | ");
+      // Serial.print(output_M[1]);
+      // Serial.print(" | ");
+      // Serial.print(output_M[2]);
+      // Serial.print(" | ");
+      // Serial.print(output_M[3]);
+      // Serial.print(" | ");
 	}
 	else {
 		Serial.write(output_M, sizeof(int) * arraySize);
