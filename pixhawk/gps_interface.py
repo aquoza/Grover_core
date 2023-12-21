@@ -11,7 +11,7 @@ YAW_NORTH_BIAS = 0
 I2Cbus = smbus.SMBus(1)
 slaveAddress = 0x08
 
-data = [0]*6
+data = [0,0,0,0,0,0]
 # Connect to Pixhawk over the appropriate connection (e.g., '/dev/ttyUSB0' or 'udpin:0.0.0.0:14550')
 connection = mavutil.mavlink_connection('/dev/ttyACM0')
 print(connection)
