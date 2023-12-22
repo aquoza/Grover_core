@@ -158,34 +158,34 @@ uint8_t correct_heading(double current_heading, double target_heading){
 uint8_t Autonomous (double target_GPS[2],  double current_heading){
 
 	// Implement queue for moving average
-	// if(count < MOVNG_AVERAGE_SIZE){
-	// 	N_array[count] = target_GPS[0];
-	// 	E_array[count] = target_GPS[1];
-	// 	yaw_array[count] = current_heading;
+	if(count < MOVNG_AVERAGE_SIZE){
+		N_array[count] = target_GPS[0];
+		E_array[count] = target_GPS[1];
+		yaw_array[count] = current_heading;
 
-	// 	moving_average[0] += target_GPS[0];
-	// 	moving_average[1] += target_GPS[1];
-	// 	moving_average[2] += current_heading;
-	// 	count ++;
-	// 	return IDLE;
-	// }
+		moving_average[0] += target_GPS[0];
+		moving_average[1] += target_GPS[1];
+		moving_average[2] += current_heading;
+		count ++;
+		return IDLE;
+	}
 		
-	// moving_average[0] += target_GPS[0] - N_array[head[0]];
-	// moving_average[1] += target_GPS[1] - E_array[head[0]];
-	// moving_average[2] += current_heading - yaw_array[head[2]];
+	moving_average[0] += target_GPS[0] - N_array[head[0]];
+	moving_average[1] += target_GPS[1] - E_array[head[0]];
+	moving_average[2] += current_heading - yaw_array[head[2]];
 
-	// for(int i = 0; i < 3; i++){
-	// 	head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
-	// 	tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
-	// }
+	for(int i = 0; i < 3; i++){
+		head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
+		tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
+	}
 
-	// N_array[tail[0]] = target_GPS[0];
-	// E_array[tail[1]] = target_GPS[1];
-	// yaw_array[tail[2]] = current_heading;
+	N_array[tail[0]] = target_GPS[0];
+	E_array[tail[1]] = target_GPS[1];
+	yaw_array[tail[2]] = current_heading;
 
-	// target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
-	// target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
-	// current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
+	target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
+	target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
+	current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
 
 	//convert target heading to degrees
 	double target_heading = calculate_heading(target_GPS);

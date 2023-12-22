@@ -24,6 +24,6 @@ uint8_t FORWARD[] = {1, 100, 90, 0};
 int MAX_SPEED = 200; //0 - 255
 int ERR_SPEED = 20; //0 - 255
 int ERR_ACKERMANN = 6; // 0 - 255
-int ERR_HEADING = 10; // in degrees
+int ERR_HEADING = 5; // in degrees
 int MOVNG_AVERAGE_SIZE = 10;
 
