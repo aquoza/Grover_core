@@ -9,6 +9,8 @@ void recieveData()
       Serial.print("in recieveData");
 		for (int i = 0; i < 6; i++) {
 			dataGet[i] = Wire.read(); 
+      Serial.println();
+      Serial.print(dataGet[i]);
 		}
 }
 

@@ -52,7 +52,7 @@ while True:
     data = numpy.array(data)
     data = data.astype(int)
 
-    test = [1,2,3,4,5,6]
+    test = [27,28,29,30,31,32]
     with smbus.SMBus(1) as I2Cbus:
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, test)
         time.sleep(0.1)
