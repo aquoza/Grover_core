@@ -206,8 +206,8 @@ void loop(){
 	int SwitchB = pulseIn(CH5, HIGH, 30000);
 	int SwitchC = pulseIn(CH6, HIGH, 30000);
 
-      //   Serial.println(); // Add a newline character at the end of the transmission
-      // Serial.print(throttle);
+        //   Serial.println(); // Add a newline character at the end of the transmission
+        // Serial.print(throttle);
       // Serial.print(" | ");
       // Serial.print(steering);
       // Serial.print(" | ");
