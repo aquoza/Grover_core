@@ -55,7 +55,7 @@ while True:
     test = [27,28,29,30,31,32]
     with smbus.SMBus(1) as I2Cbus:
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, test)
-        print("sent",test)
+        print("sent",data)
         time.sleep(0.1)
 
     print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} m, Yaw: {yaw_degrees} degrees, Ground Speed: {ground_speed} m/s")
