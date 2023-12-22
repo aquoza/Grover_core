@@ -15,9 +15,6 @@
  **/
 byte dataGet[6]; //input data from RPI
 
-uint8_t output_M[4] = {1 , 0 , 90 , 0};
-uint8_t output_A[4] = {1 , 0 , 90 , 0};
-
 void recieveData()
 {
     int i = 0;

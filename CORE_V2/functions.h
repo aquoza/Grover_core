@@ -9,6 +9,8 @@ int tail[3] = {MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZ
 double N_array[10];
 double E_array[10];
 double yaw_array[10];
+uint8_t output_M[4] = {1 , 0 , 90 , 0};
+uint8_t output_A[4] = {1 , 0 , 90 , 0};
 
 void movingAverage(){
   if(count < MOVNG_AVERAGE_SIZE){
