@@ -8,7 +8,13 @@ void recieveData()
       Serial.println(); // Add a newline character at the end of the transmission
       Serial.print("in recieveData");
       int i = 0;
+      int temp = 0;
 		while (Wire.available()){
+          if(temp == 0){
+      temp++;
+      auto a = Wire.read();
+      continue;
+    }
 			dataGet[i] = Wire.read(); 
       Serial.println();
       Serial.print(dataGet[i]);

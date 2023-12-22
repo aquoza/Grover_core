@@ -32,14 +32,27 @@ uint8_t output_A[4] = {1 , 0 , 90 , 0};
 
 void recieveData()
 {
+    int i = 0;
+    int temp = 0;
 	while(Wire.available()){
-		for (int i = 0; i < 6; i++) {
-			dataGet[i] = Wire.read(); 
-		}
-		target_GPS[0] = (dataGet[0] << 8 | dataGet[1])/10;
-		target_GPS[1] = (dataGet[2] << 8 | dataGet[3])/10;
-		current_heading = (dataGet[4] << 8 | dataGet[5])/10;
-	}
+    if(temp == 0){
+      temp++;
+      auto a = Wire.read();
+      continue;
+    }
+		dataGet[i] = Wire.read(); 
+    i++;
+
+	}	
+  	target_GPS[0] = (dataGet[0] << 8 | dataGet[1])/10.0;
+		target_GPS[1] = (dataGet[2] << 8 | dataGet[3])/10.0;
+		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0;
+      // Serial.print(target_GPS[0]);
+      // Serial.print(" | ");
+      // Serial.print(target_GPS[1]);
+      // Serial.print(" | ");
+      // Serial.print(current_heading);
+      // Serial.print(" | ");
 }
 
 /*
@@ -160,9 +173,9 @@ uint8_t* Autonomous (double target_GPS[2],  double current_heading){
 	E_array[tail[1]] = target_GPS[1];
 	yaw_array[tail[2]] = current_heading;
 
-	target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
-	target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
-	current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
+	// target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
+	// target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
+	// current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
 
 	//convert target heading to degrees
 	double target_heading = calculate_heading(target_GPS);
@@ -182,7 +195,7 @@ uint8_t* Autonomous (double target_GPS[2],  double current_heading){
 }
 
 void setup() {
-	delay(5000);
+	delay(1000);
 
 	Wire.begin(0x08);
 	Wire.onReceive(recieveData);
@@ -230,29 +243,27 @@ void loop(){
     // recieveData();
 		Serial.write(Autonomous(target_GPS, current_heading), sizeof(int) * arraySize);
       Serial.println();
+      Serial.print(target_GPS[0]);
+      Serial.print(" | ");
+      Serial.print(target_GPS[1]);
+      Serial.print(" | ");
       Serial.print(current_heading);
       Serial.print(" | ");
+	}
+	else {
+		Serial.write(output_M, sizeof(int) * arraySize);
+		  delay(50);  // Adjust the delay based on your requirements
+      Manual(mode, throttle, steering);
+      // Serial.println();
+      // Serial.print(output_M[0]);
+      // Serial.print(" | ");
       // Serial.print(output_M[1]);
       // Serial.print(" | ");
       // Serial.print(output_M[2]);
       // Serial.print(" | ");
       // Serial.print(output_M[3]);
       // Serial.print(" | ");
-	}
-	else {
-		Serial.write(output_M, sizeof(int) * arraySize);
-		  delay(100);  // Adjust the delay based on your requirements
-      Manual(mode, throttle, steering);
-      Serial.println();
-      Serial.print(output_M[0]);
-      Serial.print(" | ");
-      Serial.print(output_M[1]);
-      Serial.print(" | ");
-      Serial.print(output_M[2]);
-      Serial.print(" | ");
-      Serial.print(output_M[3]);
-      Serial.print(" | ");
-      // Serial.print(SwitchC);
+      // // Serial.print(SwitchC);
 
 	}
 
