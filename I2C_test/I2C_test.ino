@@ -7,11 +7,13 @@ void recieveData()
 {
       Serial.println(); // Add a newline character at the end of the transmission
       Serial.print("in recieveData");
-		for (int i = 0; i < 6; i++) {
+      int i = 0;
+		while (Wire.available()){
 			dataGet[i] = Wire.read(); 
       Serial.println();
       Serial.print(dataGet[i]);
-		}
+      i++;
+    }
 }
 
 void setup() {
