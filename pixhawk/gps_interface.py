@@ -44,7 +44,7 @@ while True:
 
     #NED_target[0] = (NED_target[0]*10)
     NED_target[1] = (NED_target[1]*10)
-    NED_target[0] = 250
+    NED_target[1] = 250
     yaw_degrees = (yaw_degrees*10)
     data[0] = (NED_target[0]/256)
     data[1] = NED_target[0] % 256

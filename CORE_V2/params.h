@@ -26,3 +26,4 @@ int ERR_SPEED = 20; //0 - 255
 int ERR_ACKERMANN = 6; // 0 - 255
 int ERR_HEADING = 10; // in degrees
 int MOVNG_AVERAGE_SIZE = 10;
+

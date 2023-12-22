@@ -46,7 +46,7 @@ void recieveData()
 	}	
   	target_GPS[0] = (dataGet[0] << 8 | dataGet[1])/10.0;
 		target_GPS[1] = (dataGet[2] << 8 | dataGet[3])/10.0;
-		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0;
+		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
       // Serial.print(target_GPS[0]);
       // Serial.print(" | ");
       // Serial.print(target_GPS[1]);
@@ -135,43 +135,53 @@ double calculate_heading(double* target_GPS){
 	}
 }
 
-uint8_t* correct_heading(double current_heading, double target_heading){
+uint8_t correct_heading(double current_heading, double target_heading){
 
 	if (current_heading > target_heading){
-		return LEFT;
+		for(int i = 0; i < 4 ; i++){
+      output_A[i] = LEFT[i];
+    }
+      Serial.println();
+      Serial.print("going LEFT");
+    return;
 	}
 	else{
-		return RIGHT;
+		for(int i = 0; i < 4 ; i++){
+      output_A[i] = RIGHT[i];
+    }
+          Serial.println();
+      Serial.print("going RIGHT");
+    return;
 	}
 }
 
-uint8_t* Autonomous (double target_GPS[2],  double current_heading){
+uint8_t Autonomous (double target_GPS[2],  double current_heading){
 
 	// Implement queue for moving average
-	if(count < MOVNG_AVERAGE_SIZE){
-		N_array[count] = target_GPS[0];
-		E_array[count] = target_GPS[1];
-		yaw_array[count] = current_heading;
+	// if(count < MOVNG_AVERAGE_SIZE){
+	// 	N_array[count] = target_GPS[0];
+	// 	E_array[count] = target_GPS[1];
+	// 	yaw_array[count] = current_heading;
 
-		moving_average[0] += target_GPS[0];
-		moving_average[1] += target_GPS[1];
-		moving_average[2] += current_heading;
-		count ++;
-		return IDLE;
-	}
+	// 	moving_average[0] += target_GPS[0];
+	// 	moving_average[1] += target_GPS[1];
+	// 	moving_average[2] += current_heading;
+	// 	count ++;
+	// 	return IDLE;
+	// }
 		
-	moving_average[0] += target_GPS[0] - N_array[head[0]];
-	moving_average[1] += target_GPS[1] - E_array[head[0]];
-	moving_average[2] += current_heading - yaw_array[head[2]];
+	// moving_average[0] += target_GPS[0] - N_array[head[0]];
+	// moving_average[1] += target_GPS[1] - E_array[head[0]];
+	// moving_average[2] += current_heading - yaw_array[head[2]];
 
-	for(int i = 0; i < 3; i++){
-		head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
-		tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
-	}
+	// for(int i = 0; i < 3; i++){
+	// 	head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
+	// 	tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
+	// }
 
-	N_array[tail[0]] = target_GPS[0];
-	E_array[tail[1]] = target_GPS[1];
-	yaw_array[tail[2]] = current_heading;
+	// N_array[tail[0]] = target_GPS[0];
+	// E_array[tail[1]] = target_GPS[1];
+	// yaw_array[tail[2]] = current_heading;
 
 	// target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
 	// target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
@@ -182,15 +192,25 @@ uint8_t* Autonomous (double target_GPS[2],  double current_heading){
 
 	//Is reached
 	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
-		return IDLE;
+		for(int i = 0; i < 4 ; i++){
+      output_A[i] = IDLE[i];
+    }
+      Serial.println();
+      Serial.print("going IDLE");
+    return;
 	}
 	//correct heading if its off
 	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
-		return correct_heading(current_heading, target_heading);
+		correct_heading(current_heading, target_heading);
+    return;
 	}
 
-
-	return FORWARD;
+  for(int i = 0; i < 4 ; i++){
+      output_A[i] = FORWARD[i];
+  }
+      Serial.println();
+      Serial.print("going FORWARD");
+	return;
 
 }
 
@@ -241,14 +261,17 @@ void loop(){
 	if(SwitchB > 1500){
     delay(100);
     // recieveData();
-		Serial.write(Autonomous(target_GPS, current_heading), sizeof(int) * arraySize);
-      Serial.println();
-      Serial.print(target_GPS[0]);
-      Serial.print(" | ");
-      Serial.print(target_GPS[1]);
-      Serial.print(" | ");
-      Serial.print(current_heading);
-      Serial.print(" | ");
+    Autonomous(target_GPS, current_heading);
+		Serial.write(output_A, sizeof(int) * arraySize);
+      // Serial.println();
+      // Serial.print(output_A[0]);
+      // Serial.print(" | ");
+      // Serial.print(output_A[1]);
+      // Serial.print(" | ");
+      // Serial.print(output_A[2]);
+      // Serial.print(" | ");
+      // Serial.print(output_A[3]);
+      // Serial.print(" | ");
 	}
 	else {
 		Serial.write(output_M, sizeof(int) * arraySize);
