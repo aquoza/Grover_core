@@ -49,11 +49,12 @@ while True:
     data[3] = NED_target[1] % 256
     data[4] = (yaw_degrees/256)%1
     data[5] = yaw_degrees % 256
-    data[5] = 25
     data = numpy.array(data)
     data = data.astype(int)
+
+    test = [1,2,3,4,5,6]
     with smbus.SMBus(1) as I2Cbus:
-        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
+        I2Cbus.write_i2c_block_data(slaveAddress, 0x00, test)
         time.sleep(0.1)
 
     print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} m, Yaw: {yaw_degrees} degrees, Ground Speed: {ground_speed} m/s")
