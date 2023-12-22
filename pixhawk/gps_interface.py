@@ -40,7 +40,7 @@ while True:
     # Extract velocity data
     # ground_speed = velocity_msg.groundspeed  # Ground speed in meters per second
 
-    print(f"Latitude: {latitude}, Longitude: {longitude}, Yaw: {yaw_degrees} degrees)
+    print(f"Latitude: {latitude}, Longitude: {longitude}, Yaw: {yaw_degrees} degrees")
 
     #NED_target[0] = (NED_target[0]*10)
     NED_target[1] = (NED_target[1]*10)
