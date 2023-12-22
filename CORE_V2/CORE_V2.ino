@@ -9,12 +9,8 @@
   1 - targetgps_NLOW
   2 - targetgps_EHIGH
   3 - targetgps_ELOW
-  4 - currentgps_NHIGH
-  5 - currentgps_NLOW
-  6 - currentgps_EHIGH
-  7 - currentgps_ELOW
-  8 - currentheadingHIGH
-  9 - currentheadingLOW
+  4 - currentheadingHIGH
+  5 - currentheadingLOW
  **/
 byte dataGet[6]; //input data from RPI
 double target_GPS[2];
@@ -277,16 +273,16 @@ void loop(){
 		Serial.write(output_M, sizeof(int) * arraySize);
 		  delay(50);  // Adjust the delay based on your requirements
       Manual(mode, throttle, steering);
-      // Serial.println();
-      // Serial.print(output_M[0]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[1]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[2]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[3]);
-      // Serial.print(" | ");
-      // // Serial.print(SwitchC);
+      Serial.println();
+      Serial.print(output_M[0]);
+      Serial.print(" | ");
+      Serial.print(output_M[1]);
+      Serial.print(" | ");
+      Serial.print(output_M[2]);
+      Serial.print(" | ");
+      Serial.print(output_M[3]);
+      Serial.print(" | ");
+      // Serial.print(SwitchC);
 
 	}
 

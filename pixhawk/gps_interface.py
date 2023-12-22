@@ -35,12 +35,12 @@ while True:
     # Convert yaw from radians to degrees
     yaw_degrees = yaw * 180 / 3.14159265359 + 180 + YAW_NORTH_BIAS
     # Wait for a VFR_HUD message (velocity data)
-    velocity_msg = connection.recv_match(type='VFR_HUD', blocking=True)
+    # velocity_msg = connection.recv_match(type='VFR_HUD', blocking=True)
 
     # Extract velocity data
-    ground_speed = velocity_msg.groundspeed  # Ground speed in meters per second
+    # ground_speed = velocity_msg.groundspeed  # Ground speed in meters per second
 
-    print(f"Latitude: {latitude}, Longitude: {longitude}, Altitude: {altitude} m, Yaw: {yaw_degrees} degrees, Ground Speed: {ground_speed} m/s")
+    print(f"Latitude: {latitude}, Longitude: {longitude}, Yaw: {yaw_degrees} degrees)
 
     #NED_target[0] = (NED_target[0]*10)
     NED_target[1] = (NED_target[1]*10)
@@ -58,7 +58,7 @@ while True:
     with smbus.SMBus(1) as I2Cbus:
         I2Cbus.write_i2c_block_data(slaveAddress, 0x00, data)
         print("sent",data)
-        time.sleep(0.1)
+        time.sleep(0.5)
 
 
    # print(f" Yaw: {yaw_degrees}")
