@@ -12,6 +12,18 @@ double yaw_array[10];
 uint8_t output_M[4] = {1 , 0 , 90 , 0};
 uint8_t output_A[4] = {1 , 0 , 90 , 0};
 
+// Actions
+uint8_t IDLE[] = {1, 0, 90, 0};
+uint8_t LEFT[] = {3, 100, 0, 2};
+uint8_t RIGHT[] = {3, 100, 2, 0};
+uint8_t FORWARD[] = {1, 100, 90, 0};
+
+void output(uint8_t arr[]){
+  for(int i = 0; i < 4; i++){
+    output_A[i] = arr[i];
+  }
+}
+
 void movingAverage(){
   if(count < MOVNG_AVERAGE_SIZE){
 		N_array[count] = target_GPS[0];
@@ -22,7 +34,8 @@ void movingAverage(){
 		moving_average[1] += target_GPS[1];
 		moving_average[2] += current_heading;
 		count ++;
-		return IDLE;
+    output(IDLE);
+		return;
 	}
 		
 	moving_average[0] += target_GPS[0] - N_array[head[0]];
@@ -56,19 +69,15 @@ double calculate_heading(double* target_GPS){
 void correct_heading(double current_heading, double target_heading){
 
 	if (current_heading > target_heading){
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = LEFT[i];
-    }
-      Serial.println();
-      Serial.print("going LEFT");
+      output(LEFT);
+      // Serial.println();
+      // Serial.print("going LEFT");
     return;
 	}
 	else{
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = RIGHT[i];
-    }
-          Serial.println();
-      Serial.print("going RIGHT");
+      output(RIGHT);
+      // Serial.println();
+      // Serial.print("going RIGHT");
     return;
 	}
 }
@@ -144,11 +153,9 @@ void Autonomous (double target_GPS[2],  double current_heading){
 
 	//Is reached
 	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = IDLE[i];
-    }
-      Serial.println();
-      Serial.print("going IDLE");
+      output(IDLE);
+      // Serial.println();
+      // Serial.print("going IDLE");
     return;
 	}
 	//correct heading if its off
@@ -157,11 +164,9 @@ void Autonomous (double target_GPS[2],  double current_heading){
     return;
 	}
 
-  for(int i = 0; i < 4 ; i++){
-      output_A[i] = FORWARD[i];
-  }
-      Serial.println();
-      Serial.print("going FORWARD");
+      output(FORWARD));
+      //Serial.println();
+      // Serial.print("going FORWARD");
 	return;
 
 }

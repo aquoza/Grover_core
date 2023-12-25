@@ -76,7 +76,7 @@ void loop(){
 	if(SwitchB > 1500){
     delay(100);
     Autonomous(target_GPS, current_heading);
-	// 	Serial.write(output_A, sizeof(int) * arraySize);
+		Serial.write(output_A, sizeof(int) * arraySize);
   //     // Serial.println();
   //     // Serial.print(output_A[0]);
   //     // Serial.print(" | ");
