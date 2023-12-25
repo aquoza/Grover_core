@@ -17,8 +17,4 @@ const int baudRate = 19200;
 
 
 
-int MAX_SPEED = 100; //0 - 255
-int ERR_SPEED = 20; //0 - 255
-int ERR_ACKERMANN = 6; // 0 - 255
-int ERR_HEADING = 5; // in degrees
-int MOVNG_AVERAGE_SIZE = 10;
+

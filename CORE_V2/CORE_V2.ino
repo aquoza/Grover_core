@@ -32,12 +32,12 @@ void recieveData()
   	target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
 		target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
 		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
-      Serial.print(target_GPS[0]);
-      Serial.print(" | ");
-      Serial.print(target_GPS[1]);
-      Serial.print(" | ");
-      Serial.print(current_heading);
-      Serial.print(" | ");
+      // Serial.print(target_GPS[0]);
+      // Serial.print(" | ");
+      // Serial.print(target_GPS[1]);
+      // Serial.print(" | ");
+      // Serial.print(current_heading);
+      // Serial.print(" | ");
 }
 
 
@@ -71,37 +71,18 @@ void loop(){
 	else if (SwitchC >= 1800){ mode = 3; }
 	else { mode = 0; }
 
+  // SwitchB = 1000;
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
 	if(SwitchB > 1500){
     delay(100);
     Autonomous(target_GPS, current_heading);
-		Serial.write(output_A, sizeof(int) * arraySize);
-  //     // Serial.println();
-  //     // Serial.print(output_A[0]);
-  //     // Serial.print(" | ");
-  //     // Serial.print(output_A[1]);
-  //     // Serial.print(" | ");
-  //     // Serial.print(output_A[2]);
-  //     // Serial.print(" | ");
-  //     // Serial.print(output_A[3]);
-  //     // Serial.print(" | ");
+		Serial.write(output_M, sizeof(int) * arraySize);
 	}
 	else {
-      Manual(mode, throttle, steering);
-      Serial.write(output_M, sizeof(int) * arraySize);
-      // Serial.println();
-      // Serial.print(output_M[0]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[1]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[2]);
-      // Serial.print(" | ");
-      // Serial.print(output_M[3]);
-      // Serial.print(" | ");
-      // Serial.print(SwitchC);
-		  delay(100);
-
+    Manual(mode, throttle, steering);
+    Serial.write(output_M, sizeof(int) * arraySize);
+		delay(100);
 	}
 
 }
