@@ -77,15 +77,17 @@ void Manual(uint8_t mode, int throttle, int steering){
 
 
 	int speed, modifier;
-	uint8_t direction = 0;
+	uint8_t direction = 1;
 
 	speed = map(throttle, 950, 2050, -MAX_SPEED , MAX_SPEED);
 
-	if(abs(speed) < ERR_SPEED){speed = 0;}  //speed err
+	if(abs(speed) < ERR_SPEED){speed = 0; direction = 1;}  //speed err
 	else if(speed < 0){
 		speed =abs(speed);
-		direction = 2;
-	}
+		direction = 0;
+	}else{
+    direction = 2;
+  }
 
 	switch (mode){
 
@@ -135,7 +137,7 @@ void Manual(uint8_t mode, int throttle, int steering){
 void Autonomous (double target_GPS[2],  double current_heading){
 
 	// Implement queue for moving average
-
+  movingAverage();
 
 	//convert target heading to degrees
 	double target_heading = calculate_heading(target_GPS);

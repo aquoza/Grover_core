@@ -60,9 +60,13 @@ int setModifier(int channelOutput, int mode){
     else return map(channelOutput,-100,97,0,180);
   }
   else if(mode==2){
-    if(abs(channelOutput)<3) return 127;
-    else if(channelOutput<-3) return round(-1*20*cos((channelOutput*1.47)/100))+40;
-    else return round(1*20*cos((channelOutput*1.47)/100))+40;
+    // if(abs(channelOutput)<3) return 127;
+    // else if(channelOutput<-3) return round(-1*20*cos((channelOutput*1.47)/100))+40;
+    // else return round(1*20*cos((channelOutput*1.47)/100))+40;
+
+    	int modifier = map(channelOutput, -100 , 100, 0 , 255);
+			if(126 - 6 < modifier && modifier < 126 + 6){modifier = 127;}
+      return modifier;
   }
 
   else if (mode==3) return 0;  // 0-left, 1-nothing, 2-right
@@ -105,18 +109,21 @@ void loop() {
 
   // Send the array over UART
   Serial.write(arr, sizeof(int) * arraySize);
-  // Serial.println(); // Add a newline character at the end of the transmission
-  // Serial.print(modifier);
+  Serial.println(); // Add a newline character at the end of the transmission
+  Serial.println(mode);
+  Serial.print(" | ");
+  Serial.print(speed);
+  Serial.print(" | ");
+  Serial.print(modifier);
+  Serial.print(" | ");
+  Serial.print(direction);
   // Serial.print(" | ");
-  // Serial.print(direction);
-  // Serial.print(" | ");
-  // Serial.print(speed);
-  // Serial.print(" | ");
+
   // Serial.print(ch4Value);
   // Serial.print(" | ");
   // Serial.print(ch5Value);
-  // Serial.print(" | ");
-  // Serial.println(mode);
 
-  delay(100);  // Adjust the delay based on your requirements
+
+
+  delay(50);  // Adjust the delay based on your requirements
 }

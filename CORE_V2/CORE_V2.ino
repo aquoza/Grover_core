@@ -6,7 +6,7 @@
 #include "functions.h"
 
 /**
-  0 - targetgps_NHIGH
+  0 - targetgps_NHIGH 
   1 - targetgps_NLOW
   2 - targetgps_EHIGH
   3 - targetgps_ELOW
@@ -29,20 +29,19 @@ void recieveData()
     i++;
 
 	}
-  	target_GPS[0] = (dataGet[0] << 8 | dataGet[1])/10.0;
-		target_GPS[1] = (dataGet[2] << 8 | dataGet[3])/10.0;
+  	target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
+		target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
 		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
-      // Serial.print(target_GPS[0]);
-      // Serial.print(" | ");
-      // Serial.print(target_GPS[1]);
-      // Serial.print(" | ");
-      // Serial.print(current_heading);
-      // Serial.print(" | ");
+      Serial.print(target_GPS[0]);
+      Serial.print(" | ");
+      Serial.print(target_GPS[1]);
+      Serial.print(" | ");
+      Serial.print(current_heading);
+      Serial.print(" | ");
 }
 
 
 void setup() {
-	delay(1000);
 
 	Wire.begin(0x08);
 	Wire.onReceive(recieveData);
@@ -75,33 +74,33 @@ void loop(){
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
 	if(SwitchB > 1500){
-    delay(50);
+    delay(100);
     Autonomous(target_GPS, current_heading);
-		Serial.write(output_A, sizeof(int) * arraySize);
-      // Serial.println();
-      // Serial.print(output_A[0]);
-      // Serial.print(" | ");
-      // Serial.print(output_A[1]);
-      // Serial.print(" | ");
-      // Serial.print(output_A[2]);
-      // Serial.print(" | ");
-      // Serial.print(output_A[3]);
-      // Serial.print(" | ");
+	// 	Serial.write(output_A, sizeof(int) * arraySize);
+  //     // Serial.println();
+  //     // Serial.print(output_A[0]);
+  //     // Serial.print(" | ");
+  //     // Serial.print(output_A[1]);
+  //     // Serial.print(" | ");
+  //     // Serial.print(output_A[2]);
+  //     // Serial.print(" | ");
+  //     // Serial.print(output_A[3]);
+  //     // Serial.print(" | ");
 	}
 	else {
-		Serial.write(output_M, sizeof(int) * arraySize);
-		  delay(50);  // Adjust the delay based on your requirements
       Manual(mode, throttle, steering);
-      Serial.println();
-      Serial.print(output_M[0]);
-      Serial.print(" | ");
-      Serial.print(output_M[1]);
-      Serial.print(" | ");
-      Serial.print(output_M[2]);
-      Serial.print(" | ");
-      Serial.print(output_M[3]);
-      Serial.print(" | ");
+      Serial.write(output_M, sizeof(int) * arraySize);
+      // Serial.println();
+      // Serial.print(output_M[0]);
+      // Serial.print(" | ");
+      // Serial.print(output_M[1]);
+      // Serial.print(" | ");
+      // Serial.print(output_M[2]);
+      // Serial.print(" | ");
+      // Serial.print(output_M[3]);
+      // Serial.print(" | ");
       // Serial.print(SwitchC);
+		  delay(100);
 
 	}
 
