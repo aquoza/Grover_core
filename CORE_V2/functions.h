@@ -9,14 +9,15 @@ int tail[3] = {MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZ
 double N_array[10];
 double E_array[10];
 double yaw_array[10];
-uint8_t output_M[4] = {1 , 0 , 90 , 0};
-uint8_t output_A[4] = {1 , 0 , 90 , 0};
+uint8_t output_M[4] = {1 , 0 , 90 , 1};
+uint8_t output_A[4] = {1 , 0 , 90 , 1};
+byte dataGet[6]; //input data from RPI
 
 // Actions
-uint8_t IDLE[] = {1, 0, 90, 0};
-uint8_t LEFT[] = {3, 100, 0, 2};
-uint8_t RIGHT[] = {3, 100, 2, 0};
-uint8_t FORWARD[] = {1, 100, 90, 0};
+uint8_t IDLE[] = {1, 0, 90, 1};
+uint8_t LEFT[] = {3, 50, 0, 2};
+uint8_t RIGHT[] = {3, 500, 2, 0};
+uint8_t FORWARD[] = {1, 100, 90, 2};
 
 void output(uint8_t arr[]){
   for(int i = 0; i < 4; i++){
@@ -124,14 +125,14 @@ void Manual(uint8_t mode, int throttle, int steering){
 			mode = 1;
 			speed = 0;
 			modifier = 90;
-			direction = 0;
+			direction = 1;
 			break;
 
 		default :
 			mode = 1;
 			speed = 0;
 			modifier = 90;
-			direction = 0;
+			direction = 1;
 			break;
 	}
 
@@ -142,14 +143,19 @@ void Manual(uint8_t mode, int throttle, int steering){
 
 	return ;
 }
+// Latitude: 19.1325719, Longitude: 72.9158854
 
 void Autonomous (double target_GPS[2],  double current_heading){
 
 	// Implement queue for moving average
-  movingAverage();
+  // movingAverage();
 
 	//convert target heading to degrees
 	double target_heading = calculate_heading(target_GPS);
+
+  target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
+	target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
+	current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
 
 	//Is reached
 	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
@@ -164,7 +170,7 @@ void Autonomous (double target_GPS[2],  double current_heading){
     return;
 	}
 
-      output(FORWARD));
+      output(FORWARD);
       //Serial.println();
       // Serial.print("going FORWARD");
 	return;

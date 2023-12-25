@@ -13,7 +13,7 @@
   4 - currentheadingHIGH
   5 - currentheadingLOW
  **/
-byte dataGet[6]; //input data from RPI
+
 
 void recieveData()
 {
@@ -29,15 +29,12 @@ void recieveData()
     i++;
 
 	}
-  	target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
-		target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
-		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
-      Serial.print(target_GPS[0]);
-      Serial.print(" | ");
-      Serial.print(target_GPS[1]);
-      Serial.print(" | ");
-      Serial.print(current_heading);
-      Serial.print(" | ");
+      // Serial.print(target_GPS[0]);
+      // Serial.print(" | ");
+      // Serial.print(target_GPS[1]);
+      // Serial.print(" | ");
+      // Serial.print(current_heading);
+      // Serial.print(" | ");
 }
 
 
