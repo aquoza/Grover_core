@@ -9,69 +9,69 @@ int tail[3] = {MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZE - 1, MOVNG_AVERAGE_SIZ
 double N_array[10];
 double E_array[10];
 double yaw_array[10];
-uint8_t output_M[4] = {1 , 0 , 90 , 0};
-uint8_t output_A[4] = {1 , 0 , 90 , 0};
+uint8_t output_M[4] = {1 , 0 , 90 , 1};
+uint8_t output_A[4] = {1 , 0 , 90 , 1};
 
-void movingAverage(){
-  if(count < MOVNG_AVERAGE_SIZE){
-		N_array[count] = target_GPS[0];
-		E_array[count] = target_GPS[1];
-		yaw_array[count] = current_heading;
+// void movingAverage(){
+//   if(count < MOVNG_AVERAGE_SIZE){
+// 		N_array[count] = target_GPS[0];
+// 		E_array[count] = target_GPS[1];
+// 		yaw_array[count] = current_heading;
 
-		moving_average[0] += target_GPS[0];
-		moving_average[1] += target_GPS[1];
-		moving_average[2] += current_heading;
-		count ++;
-		return IDLE;
-	}
+// 		moving_average[0] += target_GPS[0];
+// 		moving_average[1] += target_GPS[1];
+// 		moving_average[2] += current_heading;
+// 		count ++;
+// 		return IDLE;
+// 	}
 		
-	moving_average[0] += target_GPS[0] - N_array[head[0]];
-	moving_average[1] += target_GPS[1] - E_array[head[0]];
-	moving_average[2] += current_heading - yaw_array[head[2]];
+// 	moving_average[0] += target_GPS[0] - N_array[head[0]];
+// 	moving_average[1] += target_GPS[1] - E_array[head[0]];
+// 	moving_average[2] += current_heading - yaw_array[head[2]];
 
-	for(int i = 0; i < 3; i++){
-		head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
-		tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
-	}
+// 	for(int i = 0; i < 3; i++){
+// 		head[i] = (head[i] + 1)%MOVNG_AVERAGE_SIZE;
+// 		tail[i] = (tail[i] + 1)%MOVNG_AVERAGE_SIZE;
+// 	}
 
-	N_array[tail[0]] = target_GPS[0];
-	E_array[tail[1]] = target_GPS[1];
-	yaw_array[tail[2]] = current_heading;
+// 	N_array[tail[0]] = target_GPS[0];
+// 	E_array[tail[1]] = target_GPS[1];
+// 	yaw_array[tail[2]] = current_heading;
 
-	target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
-	target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
-	current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
-  return;
-}
+// 	target_GPS[0] = moving_average[0]/MOVNG_AVERAGE_SIZE;
+// 	target_GPS[1] = moving_average[1]/MOVNG_AVERAGE_SIZE;
+// 	current_heading = moving_average[2]/MOVNG_AVERAGE_SIZE;
+//   return;
+// }
 
-double calculate_heading(double* target_GPS){
-	if(target_GPS[1] >= 0){
-		return 90 - atan(target_GPS[0]/target_GPS[1])*57.2957795131;
-	}
-	else{
-		return -90 - atan(target_GPS[0]/target_GPS[1])*57.2957795131;
-	}
-}
+// double calculate_heading(double* target_GPS){
+// 	if(target_GPS[1] >= 0){
+// 		return 90 - atan(target_GPS[0]/target_GPS[1])*57.2957795131;
+// 	}
+// 	else{
+// 		return -90 - atan(target_GPS[0]/target_GPS[1])*57.2957795131;
+// 	}
+// }
 
-void correct_heading(double current_heading, double target_heading){
+// void correct_heading(double current_heading, double target_heading){
 
-	if (current_heading > target_heading){
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = LEFT[i];
-    }
-      Serial.println();
-      Serial.print("going LEFT");
-    return;
-	}
-	else{
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = RIGHT[i];
-    }
-          Serial.println();
-      Serial.print("going RIGHT");
-    return;
-	}
-}
+// 	if (current_heading > target_heading){
+// 		for(int i = 0; i < 4 ; i++){
+//       output_A[i] = LEFT[i];
+//     }
+//       // Serial.println();
+//       // Serial.print("going LEFT");
+//     return;
+// 	}
+// 	else{
+// 		for(int i = 0; i < 4 ; i++){
+//       output_A[i] = RIGHT[i];
+//     }
+//       //     Serial.println();
+//       // Serial.print("going RIGHT");
+//     return;
+// 	}
+// }
 
 void Manual(uint8_t mode, int throttle, int steering){
 
@@ -115,14 +115,14 @@ void Manual(uint8_t mode, int throttle, int steering){
 			mode = 1;
 			speed = 0;
 			modifier = 90;
-			direction = 0;
+			direction = 1;
 			break;
 
 		default :
 			mode = 1;
 			speed = 0;
 			modifier = 90;
-			direction = 0;
+			direction = 1;
 			break;
 	}
 
@@ -134,34 +134,34 @@ void Manual(uint8_t mode, int throttle, int steering){
 	return ;
 }
 
-void Autonomous (double target_GPS[2],  double current_heading){
+// void Autonomous (double target_GPS[2],  double current_heading){
 
-	// Implement queue for moving average
-  movingAverage();
+// 	// Implement queue for moving average
+//   // movingAverage();
 
-	//convert target heading to degrees
-	double target_heading = calculate_heading(target_GPS);
+// 	//convert target heading to degrees
+// 	double target_heading = calculate_heading(target_GPS);
 
-	//Is reached
-	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
-		for(int i = 0; i < 4 ; i++){
-      output_A[i] = IDLE[i];
-    }
-      Serial.println();
-      Serial.print("going IDLE");
-    return;
-	}
-	//correct heading if its off
-	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
-		correct_heading(current_heading, target_heading);
-    return;
-	}
+// 	//Is reached
+// 	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
+// 		for(int i = 0; i < 4 ; i++){
+//       output_A[i] = IDLE[i];
+//     }
+//       // Serial.println();
+//       // Serial.print("going IDLE");
+//     return;
+// 	}
+// 	//correct heading if its off
+// 	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
+// 		correct_heading(current_heading, target_heading);
+//     return;
+// 	}
 
-  for(int i = 0; i < 4 ; i++){
-      output_A[i] = FORWARD[i];
-  }
-      Serial.println();
-      Serial.print("going FORWARD");
-	return;
+//   for(int i = 0; i < 4 ; i++){
+//       output_A[i] = FORWARD[i];
+//   }
+//       // Serial.println();
+//       // Serial.print("going FORWARD");
+// 	return;
 
-}
+// }
