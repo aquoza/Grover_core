@@ -99,10 +99,10 @@ void loop() {
   ch3Value = readChannel(CH3, -100);
   ch4Value = readChannel(CH4, 0);
   ch5Value = readChannel(CH5, 0);
-  mode = setMode(CH6,false);
-  speed=setSpeed(ch3Value);
-  modifier=setModifier(ch1Value,mode);
-  direction=setDirection(ch2Value,mode);
+  mode = 3;
+  speed=200;
+  modifier=0;
+  direction=2;
   
   uint8_t arr[4]={mode,speed,modifier,direction};
   int arraySize = 4;

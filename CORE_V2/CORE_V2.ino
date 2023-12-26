@@ -15,6 +15,7 @@
  **/
 byte dataGet[6]; //input data from RPI
 
+
 void recieveData()
 {
     int i = 0;
@@ -72,18 +73,17 @@ void loop(){
 	else if (SwitchC >= 1800){ mode = 3; }
 	else { mode = 0; }
 
-  // SwitchB = 1000;
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
+  SwitchB = 1000;
 	if(SwitchB > 1500){
-    delay(100);
     Autonomous(target_GPS, current_heading);
-		Serial.write(output_M, sizeof(int) * arraySize);
 	}
 	else {
     Manual(mode, throttle, steering);
-    Serial.write(output_M, sizeof(int) * arraySize);
-		delay(100);
 	}
+  Serial.write(output_M, sizeof(int) * arraySize);
+	delay(100);
+
 
 }
