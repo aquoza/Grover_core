@@ -43,6 +43,7 @@ void recieveData()
 
 void setup() {
 
+  delay(3000);
 	Wire.begin(0x08);
 	Wire.onReceive(recieveData);
 

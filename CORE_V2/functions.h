@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
-int MAX_SPEED = 50; //0 - 255
+int MAX_SPEED = 120; //0 - 255
 int ERR_SPEED = 20; //0 - 255
 int ERR_ACKERMANN = 6; // 0 - 255
-int ERR_HEADING = 5; // in degrees
+int ERR_HEADING = 10; // in degrees
 int MOVNG_AVERAGE_SIZE = 10;
 
 
@@ -22,9 +22,9 @@ uint8_t output_M[4] = {1 , 0 , 90 , 1};
 
 // Actions
 uint8_t IDLE[] = {1, 0, 90, 1};
-uint8_t LEFT[] = {3, 50, 0, 2};
-uint8_t RIGHT[] = {3, 50, 2, 0};
-uint8_t FORWARD[] = {1, 50, 90, 2};
+uint8_t LEFT[] = {3, 70, 0, 2};
+uint8_t RIGHT[] = {3, 70, 2, 0};
+uint8_t FORWARD[] = {1, 100, 90, 2};
 
 void output(uint8_t arr[]){
   for(int i = 0; i < 4; i++){
