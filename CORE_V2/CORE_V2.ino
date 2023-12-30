@@ -16,37 +16,37 @@
 byte dataGet[6]; //input data from RPI
 
 
-void recieveData()
-{
-    int i = 0;
-    int temp = 0;
-	while(Wire.available()){
-    if(temp == 0){
-      temp++;
-      auto a = Wire.read();
-      continue;
-    }
-		dataGet[i] = Wire.read(); 
-    i++;
+// void recieveData()
+// {
+//     int i = 0;
+//     int temp = 0;
+// 	while(Wire.available()){
+//     if(temp == 0){
+//       temp++;
+//       auto a = Wire.read();
+//       continue;
+//     }
+// 		dataGet[i] = Wire.read(); 
+//     i++;
 
-	}
-  	target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
-		target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
-		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
-      // Serial.print(target_GPS[0]);
-      // Serial.print(" | ");
-      // Serial.print(target_GPS[1]);
-      // Serial.print(" | ");
-      // Serial.print(current_heading);
-      // Serial.print(" | ");
-}
+// 	}
+//   	target_GPS[0] = ((dataGet[0] << 8 | dataGet[1]) - 32768)/10.0;
+// 		target_GPS[1] = ((dataGet[2] << 8 | dataGet[3]) - 32768)/10.0;
+// 		current_heading = (dataGet[4] << 8 | dataGet[5])/10.0 - 180;
+//       // Serial.print(target_GPS[0]);
+//       // Serial.print(" | ");
+//       // Serial.print(target_GPS[1]);
+//       // Serial.print(" | ");
+//       // Serial.print(current_heading);
+//       // Serial.print(" | ");
+// }
 
 
 void setup() {
 
-  delay(3000);
-	Wire.begin(0x08);
-	Wire.onReceive(recieveData);
+  delay(1000);
+	// Wire.begin (0x08);
+	// Wire.onReceive(recieveData);
 
 	Serial.begin(baudRate);
 
@@ -66,6 +66,16 @@ void loop(){
 	int SwitchB = pulseIn(CH5, HIGH, 30000);
 	int SwitchC = pulseIn(CH6, HIGH, 30000);
 
+      //   Serial.println();
+      //   Serial.print(throttle);
+      // Serial.print(" | ");
+      //   Serial.print(steering);
+      // Serial.print(" | ");
+      //   Serial.print(SwitchB);
+      // Serial.print(" | ");
+      //         Serial.print(SwitchC);
+      // Serial.print(" | ");
+
 	int mode = 0;
 	//Getting mode
 	if(SwitchC < 1200){ mode = 1; }
@@ -75,15 +85,23 @@ void loop(){
 
 	//Autonomous or Manual depending on SwitchC
 	int arraySize = 4;
-  SwitchB = 1000;
+  // SwitchB = 1800;
 	if(SwitchB > 1500){
-    Autonomous(target_GPS, current_heading);
+    // Autonomous(target_GPS, current_heading);
 	}
 	else {
     Manual(mode, throttle, steering);
 	}
   Serial.write(output_M, sizeof(int) * arraySize);
 	delay(100);
-
+      // Serial.println();
+      //   Serial.print(output_M[0]);
+      // Serial.print(" | ");
+      //   Serial.print(output_M[1]);
+      // Serial.print(" | ");
+      //   Serial.print(output_M[2]);
+      // Serial.print(" | ");
+      //         Serial.print(output_M[3]);
+      // Serial.print(" | ");
 
 }

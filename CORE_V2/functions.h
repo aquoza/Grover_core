@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-int MAX_SPEED = 120; //0 - 255
+int MAX_SPEED = 250; //0 - 255
 int ERR_SPEED = 20; //0 - 255
 int ERR_ACKERMANN = 6; // 0 - 255
 int ERR_HEADING = 30; // in degrees
@@ -27,7 +27,7 @@ uint8_t IDLE[] = {1, 0, 90, 1};
 uint8_t LEFT[] = {3, 200, 0, 2};
 uint8_t RIGHT[] = {3, 200, 2, 0};
 uint8_t FORWARD[] = {1, 100, 90, 2};
-int bsdk = 0;
+// int bsdk = 0;
 
 int ctl_bit = 1;
 
@@ -35,20 +35,20 @@ void output(uint8_t arr[]){
   for(int i = 0; i < 4; i++){
     output_M[i] = arr[i];
   }
-  if(state_current != state_next){
-      ctl_bit = 0;
-      bsdk = 0;
-  }
-  if(bsdk < 10 & ctl_bit == 0){
-    // Serial.print(bsdk);
-    output_M[1] = 0;
-    bsdk = bsdk + 1;
-  }else{
-    bsdk = 0;
-    ctl_bit = 1;
-  }
+  // if(state_current != state_next){
+  //     ctl_bit = 0;
+  //     bsdk = 0;
+  // }
+  // if(bsdk < 10 & ctl_bit == 0){
+  //   // Serial.print(bsdk);
+  //   output_M[1] = 0;
+  //   bsdk = bsdk + 1;
+  // }else{
+  //   bsdk = 0;
+  //   ctl_bit = 1;
+  // }
 
-  state_current = state_next;
+  // state_current = state_next;
   return;
 }
 
@@ -180,34 +180,34 @@ void Manual(uint8_t mode, int throttle, int steering){
 	return ;
 }
 
-void Autonomous (double target_GPS[2],  double current_heading){
+// void Autonomous (double target_GPS[2],  double current_heading){
 
-	// Implement queue for moving average
-  // movingAverage();
+// 	// Implement queue for moving average
+//   // movingAverage();
 
-	//convert target hsetDirection(ch2Value,mode)eading to degrees
-	double target_heading = calculate_heading(target_GPS);
+// 	//convert target hsetDirection(ch2Value,mode)eading to degrees
+// 	double target_heading = calculate_heading(target_GPS);
 
-	//Is reached
-	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
-        state_next = 0;
-      	output(IDLE);
-      // Serial.println();
-      // Serial.print("going IDLE");
-    return;
-	}
-	//correct heading if its off
-	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
-		correct_heading(current_heading, target_heading);
-    return;
-	}
-    state_next = 2;
-    output(FORWARD);
-      //Serial.println();
-      // Serial.print("going FORWARD");
-	return;
+// 	//Is reached
+// 	if(-2 < target_GPS[0] && target_GPS[0] < 2 && -2 < target_GPS[1] && target_GPS[1] < 2){
+//         state_next = 0;
+//       	output(IDLE);
+//       // Serial.println();
+//       // Serial.print("going IDLE");
+//     return;
+// 	}
+// 	//correct heading if its off
+// 	if(!(target_heading - ERR_HEADING < current_heading && current_heading < target_heading + ERR_HEADING)){
+// 		correct_heading(current_heading, target_heading);
+//     return;
+// 	}
+//     state_next = 2;
+//     output(FORWARD);
+//       // Serial.println();
+//       // Serial.print("going FORWARD");
+// 	return;
 
-}
+// }
 
 
 
